@@ -1,0 +1,32 @@
+package edu.ecu.cs.pirateplaces
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import java.io.File
+import java.util.*
+
+class PiratePlacesDetailViewModel: ViewModel() {
+
+    private val piratePlacesRepository = PiratePlacesRepository.get()
+    private val pirateIdLiveData = MutableLiveData<UUID>()
+
+    var pirateLiveData: LiveData<PiratePlace?> =
+        Transformations.switchMap(pirateIdLiveData) { pirateId ->
+            piratePlacesRepository.getPiratePlace(pirateId)
+        }
+
+    fun loadPiratePlace(pirateId: UUID)
+    {
+        pirateIdLiveData.value = pirateId
+    }
+
+    fun savePiratePlace(place: PiratePlace)
+    {
+        piratePlacesRepository.updatePiratePlace(place)
+    }
+    fun getPhotoFiles(place: PiratePlace): File
+    {
+        return piratePlacesRepository.getPhotoFiles(place) }
+}
